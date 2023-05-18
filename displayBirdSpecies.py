@@ -16,7 +16,7 @@ custom_vision_prediction_key = "e3ee0751443c43d9888408b9d6ee5fcd"
 custom_vision_endpoint = "https://birdfeedernscc-prediction.cognitiveservices.azure.com/"
 
 # Set the threshold for the percentage of image occupied by the bird
-threshold = 30
+threshold = 20
 
 # Authenticate with the Computer Vision API
 computer_vision_credentials = CognitiveServicesCredentials(computer_vision_subscription_key)
@@ -44,9 +44,6 @@ with open(photo_path, "rb") as photo_file:
 features = [VisualFeatureTypes.objects]
 results = computer_vision_client.analyze_image_in_stream(stream, features)
 
-# Path to the photo
-photo_path = "/home/birdfeeder/BirdRecognition/imageForRecognition/image.jpg"
-
 # Set the new photo path
 new_photo_path = photo_path
 
@@ -61,8 +58,6 @@ for obj in results.objects:
         if bird_percentage > threshold:
             bird_detected = True
             break  # Stop looking for objects once a bird is found
-
-# ...
 
 # If a bird is detected and meets the threshold, perform species recognition
 if bird_detected:
@@ -109,8 +104,6 @@ if bird_detected:
         print("Transmitted photo to dashboard:", modified_image_path)
     else:
         print(f"No species recognition above the probability threshold for the detected bird")
-else:
-    print("No birds detected in the image")
 
 # Get the number of pictures in the folder
 pictures_in_folder = os.listdir("/home/birdfeeder/BirdRecognition/imageToPost")
@@ -127,9 +120,3 @@ if num_pictures_in_folder > max_num_pictures:
         picture_to_remove = os.path.join("/home/birdfeeder/BirdRecognition/imageToPost", pictures_in_folder[i])
         os.remove(picture_to_remove)
         print("Removed old picture:", picture_to_remove)
-
-    else:
-        print(f"Bird detected but does not occupy more than {threshold}% of image")
-
-else:
-    print("No birds detected in the image")
